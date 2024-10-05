@@ -7,9 +7,9 @@ A simple way for displaying matrix bool on off
 
     https://github.com/aqphungngoc/UnityMatrixBool.git#{release_version}
 
-### Or simply add these line to file Packages/Manifest.json
+### Or simply add this line to file Packages/Manifest.json
 
-    "com.qutility.boolmatrix": "https://github.com/aqphungngoc/UnityMatrixBool.git",
+    "com.qutility.boolmatrix": "https://github.com/aqphungngoc/UnityMatrixBool.git#{release_version}",
 
 ## How To Use
  Add namespace 
