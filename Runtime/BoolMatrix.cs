@@ -22,15 +22,15 @@ namespace Qutility.Type
             }
         }
 
-        public bool this[int y, int x]
+        public bool this[int row, int col]
         {
-            get => matrix[y][x] == trueC;
+            get => matrix[row][col] == trueC;
             set
             {
-                char[] charArray = matrix[y].ToCharArray();
-                charArray[x] = BoolChar(value);
+                char[] charArray = matrix[row].ToCharArray();
+                charArray[col] = BoolChar(value);
                 // Convert the char array back to a string
-                matrix[y] = new string(charArray);
+                matrix[row] = new string(charArray);
             }
         }
 
