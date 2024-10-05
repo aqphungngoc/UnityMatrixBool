@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-namespace Qutility
+namespace Qutility.Type
 {
 
     [CustomPropertyDrawer(typeof(BoolMatrix))]

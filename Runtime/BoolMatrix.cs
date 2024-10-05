@@ -1,7 +1,7 @@
 
 using UnityEngine;
 
-namespace Qutility
+namespace Qutility.Type
 {
     [System.Serializable]
     public class BoolMatrix
