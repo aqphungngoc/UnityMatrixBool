@@ -184,16 +184,16 @@ namespace Qutility.Type
             }
         }
 
-        public static Rect GetRectFirstChild(Rect parentRect, float witdh, float height, float paddingX = 0, float paddingY = 0)
+        static Rect GetRectFirstChild(Rect parentRect, float witdh, float height, float paddingX = 0, float paddingY = 0)
         {
             return new Rect(parentRect.x + paddingX, parentRect.y + paddingY, witdh, height);
         }
 
-        public static Rect GetRectRight(Rect parentRect, float itemWitdh, float itemHeight, float paddingX = 0, float deltaY = 0)
+        static Rect GetRectRight(Rect parentRect, float itemWitdh, float itemHeight, float paddingX = 0, float deltaY = 0)
         {
             return new Rect(parentRect.x + parentRect.width + paddingX, parentRect.y + deltaY, itemWitdh, itemHeight);
         }
-        public static Rect GetExactRectUnder(Rect parentRect, float height, float deltaX = 0, float paddingY = 0)
+        static Rect GetExactRectUnder(Rect parentRect, float height, float deltaX = 0, float paddingY = 0)
         {
             return new Rect(parentRect.x + deltaX, parentRect.y + parentRect.height + paddingY, parentRect.width - deltaX, height);
         }
@@ -202,7 +202,7 @@ namespace Qutility.Type
         /// Zoom Up extra > 0
         /// Zoom Down extra < 0
         /// </summary>
-        public static Rect GetZoomRect(Rect parentRect, float extra)
+        static Rect GetZoomRect(Rect parentRect, float extra)
         {
             return new Rect(parentRect.x - extra, parentRect.y - extra, parentRect.width + extra * 2, parentRect.height + extra * 2);
         }
