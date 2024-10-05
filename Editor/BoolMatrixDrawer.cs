@@ -21,7 +21,6 @@ namespace Qutility.Type
             var sizeProperty = matrixProperty.FindPropertyRelative("Array.size");
 
             Rect matrixSizeRect = GetRectRight(position, position.width * 0.1f, singleHeight, -(position.width * 0.1f));
-
             int matrixSize = EditorGUI.IntField(matrixSizeRect, GUIContent.none, sizeProperty.intValue);
 
             if (matrixSize != sizeProperty.intValue)
@@ -35,16 +34,23 @@ namespace Qutility.Type
 
             if (!property.isExpanded) return;
 
+            var isAscendingProperty = property.FindPropertyRelative("isYup");
+            Rect yAscenedingRect = GetExactRectUnder(rectFoldout, singleHeight, singleHeight);
+            isAscendingProperty.boolValue = EditorGUI.Toggle(yAscenedingRect, "Screen coordinate", isAscendingProperty.boolValue);
+
+            bool isSortYincrease = isAscendingProperty.boolValue;
+
             SerializedProperty[] cacheRowProperties = new SerializedProperty[matrixSize];
-
-            Vector2 startMatrixPos = Vector2.zero;
-
             float padding = 4;
             float cellHeight = singleHeight - padding;
 
-            Rect rowRect = GetExactRectUnder(rectFoldout, singleHeight);
-            for (int y = matrixSize - 1; y > -1; y--)
+            Rect rowRect = GetExactRectUnder(rectFoldout, singleHeight, 0, singleHeight);
+            Vector2 startMatrixPos = Vector2.zero;
+
+            for (int i = 0; i < matrixSize; i++)
             {
+                int y = isSortYincrease ? i : matrixSize - 1 - i;
+
                 // row name index
                 Rect cellRect = GetRectFirstChild(rowRect, singleHeight * 3, singleHeight, singleHeight);
                 EditorGUI.LabelField(cellRect, y.ToString());
@@ -57,12 +63,12 @@ namespace Qutility.Type
                     var newChars = new char[matrixSize];
 
                     // Keep Old Value
-                    for (int i = 0; i < matrixSize; i++)
+                    for (int idC = 0; idC < matrixSize; idC++)
                     {
-                        if (i < rowBoolArray.Length)
-                            newChars[i] = rowBoolArray[i];
+                        if (idC < rowBoolArray.Length)
+                            newChars[idC] = rowBoolArray[idC];
                         else
-                            newChars[i] = BoolMatrix.falseC;
+                            newChars[idC] = BoolMatrix.falseC;
                     }
 
                     rowBoolArray = newChars;
@@ -72,7 +78,8 @@ namespace Qutility.Type
 
                 // start Serialize Cell Element
                 cellRect = GetRectRight(cellRect, cellHeight, cellHeight, padding, padding / 2f);
-                if (y == matrixSize - 1) startMatrixPos = new Vector2(cellRect.x, cellRect.y);
+
+                if (i == 0) startMatrixPos = new Vector2(cellRect.x, cellRect.y);
 
                 for (int x = 0; x < matrixSize; x++)
                 {
@@ -99,7 +106,7 @@ namespace Qutility.Type
             Rect DragRect = new Rect(startMatrixPos.x, startMatrixPos.y, matrixSize * singleHeight, matrixSize * singleHeight);
 
             // Handle mouse events for dragging toggles
-            HandleMouseDrag(DragRect, cacheRowProperties, matrixSize, singleHeight);
+            HandleMouseDrag(DragRect, cacheRowProperties, matrixSize, singleHeight, isSortYincrease);
 
             EditorGUI.EndProperty();
         }
@@ -109,10 +116,10 @@ namespace Qutility.Type
             if (!property.isExpanded) return EditorGUIUtility.singleLineHeight;
 
             var size = property.FindPropertyRelative("matrix").arraySize;
-            return (size + 2) * EditorGUIUtility.singleLineHeight;
+            return (size + 3) * EditorGUIUtility.singleLineHeight;
         }
 
-        private void HandleMouseDrag(Rect position, SerializedProperty[] cacheRowProperty, int newSize, float toggleWidth)
+        private void HandleMouseDrag(Rect position, SerializedProperty[] cacheRowProperty, int newSize, float toggleWidth, bool isSortYincrease)
         {
             bool hasDrag = false;
             Event currentEvent = Event.current;
@@ -123,7 +130,7 @@ namespace Qutility.Type
 
                 Vector2Int indexPos = GetIndexPos(currentEvent.mousePosition);
 
-                //Debug.Log($"Mouse Drag at {indexPos}");
+                Debug.Log($"Mouse Drag at {indexPos}");
 
                 SetSerializeValue(indexPos.x, indexPos.y, !currentEvent.alt);
                 // Use `Event.current.Use()` to consume the event
@@ -140,7 +147,7 @@ namespace Qutility.Type
                 position.Contains(currentEvent.mousePosition))
             {
                 Vector2Int indexPos = GetIndexPos(currentEvent.mousePosition);
-                //Debug.Log($"Mouse Click at {indexPos}");
+
                 ToogleSerializeValue(indexPos.x, indexPos.y);
 
                 currentEvent.Use();
@@ -178,7 +185,10 @@ namespace Qutility.Type
                 int indexX = Mathf.FloorToInt(xPos / toggleWidth);
 
                 float yPos = mousePos.y - position.y;
-                int indexY = newSize - 1 - Mathf.FloorToInt(yPos / toggleWidth);
+
+                int indexY = isSortYincrease ? Mathf.FloorToInt(yPos / toggleWidth) : newSize - 1 - Mathf.FloorToInt(yPos / toggleWidth);
+
+
 
                 return new Vector2Int(indexX, indexY);
             }

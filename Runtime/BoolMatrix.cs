@@ -11,7 +11,9 @@ namespace Qutility.Type
 
         public static char BoolChar(bool value) => value ? trueC : falseC;
 
-        public string[] matrix;
+        [SerializeField] bool isYup = true;
+
+        [SerializeField] string[] matrix;
 
         public BoolMatrix(int matrixSize)
         {
