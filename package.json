@@ -1,6 +1,6 @@
 {
   "name": "com.qutility.boolmatrix",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "displayName": "QutilityBoolMatrix",
   "description": "A simple way for displaying matrix bool on off",
   "unity": "2021.3",
