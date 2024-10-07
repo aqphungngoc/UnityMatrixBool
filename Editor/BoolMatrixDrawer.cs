@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 namespace Qutility.Type
@@ -130,7 +128,7 @@ namespace Qutility.Type
 
                 Vector2Int indexPos = GetIndexPos(currentEvent.mousePosition);
 
-                Debug.Log($"Mouse Drag at {indexPos}");
+                //Debug.Log($"Mouse Drag at {indexPos}");
 
                 SetSerializeValue(indexPos.x, indexPos.y, !currentEvent.alt);
                 // Use `Event.current.Use()` to consume the event

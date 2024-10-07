@@ -1,4 +1,3 @@
-
 using UnityEngine;
 
 namespace Qutility.Type
@@ -11,19 +10,20 @@ namespace Qutility.Type
 
         public static char BoolChar(bool value) => value ? trueC : falseC;
 
-        [SerializeField] bool isYup = true;
+        [SerializeField] bool isYup;
 
         [SerializeField] string[] matrix;
 
         public BoolMatrix(int matrixSize)
         {
+            isYup = false;
             matrix = new string[matrixSize];
             for (int i = 0; i < matrixSize; i++)
             {
                 matrix[i] = new string(falseC, matrixSize);
             }
         }
-
+        public bool IsDisplayAsScreenCoordinate => isYup;
         public bool this[int row, int col]
         {
             get => matrix[row][col] == trueC;
