@@ -5,56 +5,38 @@ namespace Qutility.Type
     [System.Serializable]
     public class BoolMatrix
     {
-        public const char trueC = '1';
-        public const char falseC = '0';
-
-        public static char BoolChar(bool value) => value ? trueC : falseC;
-
         [SerializeField] bool isYup;
-
-        [SerializeField] string[] matrix;
+        [SerializeField] byte[] matrix;
+        [SerializeField] int size;
 
         public BoolMatrix(int matrixSize)
         {
-            isYup = false;
-            matrix = new string[matrixSize];
-            for (int i = 0; i < matrixSize; i++)
-            {
-                matrix[i] = new string(falseC, matrixSize);
-            }
-        }
-        public bool IsDisplayAsScreenCoordinate => isYup;
-        public bool this[int row, int col]
-        {
-            get => matrix[row][col] == trueC;
-            set
-            {
-                char[] charArray = matrix[row].ToCharArray();
-                charArray[col] = BoolChar(value);
-                // Convert the char array back to a string
-                matrix[row] = new string(charArray);
-            }
+            size = matrixSize;
+            // Each byte can store 8 boolean values
+            matrix = new byte[(matrixSize * matrixSize + 7) / 8];
         }
 
-        public int GetLength(int demension)
+        public bool this[int row, int col]
         {
-            if (demension > 1) return 0;
-            if (demension == 1) return matrix[0].Length;
-            return matrix.Length;
+            get => (matrix[(row * size + col) / 8] & (1 << ((row * size + col) % 8))) != 0;
+            set
+            {
+                if (value)
+                    matrix[(row * size + col) / 8] |= (byte)(1 << ((row * size + col) % 8));
+                else
+                    matrix[(row * size + col) / 8] &= (byte)~(1 << ((row * size + col) % 8));
+            }
         }
 
         public bool[,] ToMatrix()
         {
-            int rows = GetLength(0);
-            int cols = GetLength(1);
+            bool[,] target = new bool[size, size];
 
-            bool[,] target = new bool[rows, cols];
-
-            for (int i = 0; i < rows; i++)
+            for (int i = 0; i < size; i++)
             {
-                for (int j = 0; j < cols; j++)
+                for (int j = 0; j < size; j++)
                 {
-                    target[i, j] = matrix[i][j] == trueC;
+                    target[i, j] = this[i, j];
                 }
             }
 
@@ -62,4 +44,3 @@ namespace Qutility.Type
         }
     }
 }
-

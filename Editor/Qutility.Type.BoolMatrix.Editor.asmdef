@@ -1,18 +1,9 @@
 {
-    "name": "NewAssembly",
-    "rootNamespace": "",
+    "name": "Qutility.MatrixBool.Editor",
     "references": [
-        "GUID:ee109c0660c1f2a42ad1dcd2956f9493"
+        "Qutility.MatrixBool"
     ],
     "includePlatforms": [
         "Editor"
-    ],
-    "excludePlatforms": [],
-    "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": [],
-    "versionDefines": [],
-    "noEngineReferences": false
+    ]
 }

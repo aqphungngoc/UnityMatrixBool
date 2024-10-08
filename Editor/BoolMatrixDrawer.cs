@@ -16,7 +16,7 @@ namespace Qutility.Type
             property.isExpanded = EditorGUI.Foldout(rectFoldout, property.isExpanded, label);
 
             var matrixProperty = property.FindPropertyRelative("matrix");
-            var sizeProperty = matrixProperty.FindPropertyRelative("Array.size");
+            var sizeProperty = property.FindPropertyRelative("size");
 
             Rect matrixSizeRect = GetRectRight(position, position.width * 0.1f, singleHeight, -(position.width * 0.1f));
             int matrixSize = EditorGUI.IntField(matrixSizeRect, GUIContent.none, sizeProperty.intValue);
@@ -25,7 +25,7 @@ namespace Qutility.Type
             {
                 sizeProperty.intValue = matrixSize;
 
-                matrixProperty = property.FindPropertyRelative("matrix");
+                matrixProperty.arraySize = (matrixSize * matrixSize + 7) / 8;
 
                 property.isExpanded = matrixSize != 0;
             }
@@ -38,7 +38,7 @@ namespace Qutility.Type
 
             bool isSortYincrease = isAscendingProperty.boolValue;
 
-            SerializedProperty[] cacheRowProperties = new SerializedProperty[matrixSize];
+            SerializedProperty[] cacheRowProperties = new SerializedProperty[(matrixSize * matrixSize + 7) / 8];
             float padding = 4;
             float cellHeight = singleHeight - padding;
 
@@ -53,27 +53,6 @@ namespace Qutility.Type
                 Rect cellRect = GetRectFirstChild(rowRect, singleHeight * 3, singleHeight, singleHeight);
                 EditorGUI.LabelField(cellRect, y.ToString());
 
-                cacheRowProperties[y] = matrixProperty.GetArrayElementAtIndex(y);
-
-                var rowBoolArray = cacheRowProperties[y].stringValue.ToCharArray();
-                if (rowBoolArray.Length != matrixSize)
-                {
-                    var newChars = new char[matrixSize];
-
-                    // Keep Old Value
-                    for (int idC = 0; idC < matrixSize; idC++)
-                    {
-                        if (idC < rowBoolArray.Length)
-                            newChars[idC] = rowBoolArray[idC];
-                        else
-                            newChars[idC] = BoolMatrix.falseC;
-                    }
-
-                    rowBoolArray = newChars;
-
-                    cacheRowProperties[y].stringValue = new string(rowBoolArray);
-                }
-
                 // start Serialize Cell Element
                 cellRect = GetRectRight(cellRect, cellHeight, cellHeight, padding, padding / 2f);
 
@@ -81,7 +60,12 @@ namespace Qutility.Type
 
                 for (int x = 0; x < matrixSize; x++)
                 {
-                    if (rowBoolArray[x] == BoolMatrix.trueC)
+                    int index = y * matrixSize + x;
+                    int byteIndex = index / 8;
+                    int bitIndex = index % 8;
+                    cacheRowProperties[byteIndex] ??= matrixProperty.GetArrayElementAtIndex(byteIndex);
+                    bool cellValue = ((byte)cacheRowProperties[byteIndex].intValue & (1 << bitIndex)) != 0;
+                    if (cellValue)
                     {
                         EditorGUI.DrawRect(GetZoomRect(cellRect, -2), Color.white);
                     }
@@ -113,7 +97,7 @@ namespace Qutility.Type
         {
             if (!property.isExpanded) return EditorGUIUtility.singleLineHeight;
 
-            var size = property.FindPropertyRelative("matrix").arraySize;
+            var size = property.FindPropertyRelative("size").intValue;
             return (size + 3) * EditorGUIUtility.singleLineHeight;
         }
 
@@ -157,10 +141,11 @@ namespace Qutility.Type
                 if (x > -1 && x < newSize &&
                     y > -1 && y < newSize)
                 {
-                    var charArray = cacheRowProperty[y].stringValue.ToCharArray();
-                    charArray[x] = BoolMatrix.BoolChar(charArray[x] != BoolMatrix.trueC);
+                    int index = y * newSize + x;
+                    int byteIndex = index / 8;
+                    int bitIndex = index % 8;
                     // Toggle the boolean value 
-                    cacheRowProperty[y].stringValue = new string(charArray);
+                    cacheRowProperty[byteIndex].intValue ^= 1 << bitIndex;
                 }
             }
 
@@ -170,9 +155,12 @@ namespace Qutility.Type
                 if (x > -1 && x < newSize &&
                     y > -1 && y < newSize)
                 {
-                    var charArray = cacheRowProperty[y].stringValue.ToCharArray();
-                    charArray[x] = BoolMatrix.BoolChar(value);
-                    cacheRowProperty[y].stringValue = new string(charArray);
+                    int index = y * newSize + x;
+                    int byteIndex = index / 8;
+                    int bitIndex = index % 8;
+                    cacheRowProperty[byteIndex].intValue = value
+                        ? cacheRowProperty[byteIndex].intValue | (1 << bitIndex)
+                        : cacheRowProperty[byteIndex].intValue & ~(1 << bitIndex);
                 }
             }
 
