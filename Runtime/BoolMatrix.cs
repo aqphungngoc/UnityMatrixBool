@@ -11,11 +11,13 @@ namespace Qutility.Type
 
         public BoolMatrix(int matrixSize)
         {
+            isYup = false;
             size = matrixSize;
             // Each byte can store 8 boolean values
             matrix = new byte[(matrixSize * matrixSize + 7) / 8];
         }
 
+        public bool IsDisplayAsScreenCoordinate => isYup;
         public bool this[int row, int col]
         {
             get => (matrix[(row * size + col) / 8] & (1 << ((row * size + col) % 8))) != 0;
