@@ -8,7 +8,8 @@ namespace Qutility.Type
         [SerializeField] bool isYup;
         [SerializeField] byte[] matrix;
         [SerializeField] int size;
-
+        public int Size => size;
+        public bool IsDisplayAsScreenCoordinate => isYup;
         public BoolMatrix(int matrixSize)
         {
             isYup = false;
@@ -17,8 +18,7 @@ namespace Qutility.Type
             matrix = new byte[(matrixSize * matrixSize + 7) / 8];
         }
 
-        public bool IsDisplayAsScreenCoordinate => isYup;
-        public bool this[int row, int col]
+        public bool this[int col, int row]
         {
             get => (matrix[(row * size + col) / 8] & (1 << ((row * size + col) % 8))) != 0;
             set
@@ -34,11 +34,11 @@ namespace Qutility.Type
         {
             bool[,] target = new bool[size, size];
 
-            for (int i = 0; i < size; i++)
+            for (int col = 0; col < size; col++)
             {
-                for (int j = 0; j < size; j++)
+                for (int row = 0; row < size; row++)
                 {
-                    target[i, j] = this[i, j];
+                    target[col, row] = this[col, row];
                 }
             }
 
