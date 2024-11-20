@@ -14,33 +14,35 @@ namespace Qutility.Type
 
             float singleHeight = EditorGUIUtility.singleLineHeight;
 
-            Rect rectFoldout = BoolMatrixDrawer.GetRectFirstChild(position, position.width * 0.79f, singleHeight);
+            Rect rectFoldout = BoolMatrixDrawer.GetRectFirstChild(position, position.width * 0.54f, singleHeight);
             property.isExpanded = EditorGUI.Foldout(rectFoldout, property.isExpanded, label);
 
             var matrixProperty = property.FindPropertyRelative("matrix");
             var rowCountProperty = property.FindPropertyRelative("rowCount");
             var colCountProperty = property.FindPropertyRelative("columnCount");
 
-            Rect rowCountRect = BoolMatrixDrawer.GetRectRight(position, position.width * 0.1f, singleHeight, -(position.width * 0.21f));
-            int rowCount = EditorGUI.IntField(rowCountRect, GUIContent.none, rowCountProperty.intValue);
-            Rect colCountRect = BoolMatrixDrawer.GetRectRight(position, position.width * 0.1f, singleHeight, -(position.width * 0.1f));
-            int columnCount = EditorGUI.IntField(colCountRect, GUIContent.none, colCountProperty.intValue);
+            Rect indexingRowRect = BoolMatrixDrawer.GetRectRight(position, position.width * 0.1f, singleHeight, -(position.width * 0.44f));
+            EditorGUI.LabelField(indexingRowRect, "Row");
+            indexingRowRect = BoolMatrixDrawer.GetRectRight(indexingRowRect, position.width * 0.1f, singleHeight, (position.width * 0.01f));
+            int rowCount = EditorGUI.IntField(indexingRowRect, GUIContent.none, rowCountProperty.intValue);
+            indexingRowRect =  BoolMatrixDrawer.GetRectRight(indexingRowRect, position.width * 0.1f, singleHeight, (position.width * 0.01f));
+            EditorGUI.LabelField(indexingRowRect, "Col");
+            indexingRowRect =  BoolMatrixDrawer.GetRectRight(indexingRowRect, position.width * 0.1f, singleHeight, (position.width * 0.01f));
+            int columnCount = EditorGUI.IntField(indexingRowRect, GUIContent.none, colCountProperty.intValue);
 
             if (rowCount != rowCountProperty.intValue)
             {
+                if (rowCount < 0) rowCount = 0;
                 rowCountProperty.intValue = rowCount;
-
                 matrixProperty.arraySize = (rowCount * columnCount + 7) / 8;
-
                 property.isExpanded = rowCount != 0;
             }
 
             if (columnCount != colCountProperty.intValue)
             {
+                if (columnCount < 0) columnCount = 0;
                 colCountProperty.intValue = columnCount;
-
                 matrixProperty.arraySize = (rowCount * columnCount + 7) / 8;
-
                 property.isExpanded = columnCount != 0;
             }
 
