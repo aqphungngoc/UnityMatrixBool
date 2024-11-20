@@ -1,4 +1,5 @@
 # UnityMatrixBool
+
 A simple way for displaying matrix bool on off
 
 ## How To Install
@@ -12,11 +13,13 @@ A simple way for displaying matrix bool on off
     "com.qutility.boolmatrix": "https://github.com/aqphungngoc/UnityMatrixBool.git#{release_version}",
 
 ## How To Use
- Add namespace 
- 
-     using Qutility;
-     
- Call as a serizlie variable and use as description in inspector
 
-     public BoolMatrix boolMatrix;
+Add namespace
+
+    using Qutility.Type;
+
+Call as a serizlie variable and use as description in inspector
+
+    public BoolMatrix boolMatrix;
+    public Bool2DArray bool2DArray;
  
