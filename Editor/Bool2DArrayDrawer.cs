@@ -34,7 +34,7 @@ namespace Qutility.Type
 
                 property.isExpanded = rowCount != 0;
             }
-            
+
             if (columnCount != colCountProperty.intValue)
             {
                 colCountProperty.intValue = columnCount;
@@ -54,7 +54,7 @@ namespace Qutility.Type
 
             SerializedProperty[] cacheRowProperties = new SerializedProperty[(rowCount * columnCount + 7) / 8];
             float padding = 4;
-            float cellHeight = singleHeight - padding;
+            float cellSize = singleHeight - padding;
 
             Rect rowRect = BoolMatrixDrawer.GetExactRectUnder(rectFoldout, singleHeight, 0, singleHeight);
             Vector2 startMatrixPos = Vector2.zero;
@@ -68,13 +68,13 @@ namespace Qutility.Type
                 EditorGUI.LabelField(cellRect, y.ToString());
 
                 // start Serialize Cell Element
-                cellRect = BoolMatrixDrawer.GetRectRight(cellRect, cellHeight, cellHeight, padding, padding / 2f);
+                cellRect = BoolMatrixDrawer.GetRectRight(cellRect, cellSize, cellSize, padding, padding / 2f);
 
                 if (i == 0) startMatrixPos = new Vector2(cellRect.x, cellRect.y);
 
                 for (int x = 0; x < columnCount; x++)
                 {
-                    int index = y * rowCount + x;
+                    int index = y * columnCount + x;
                     int byteIndex = index / 8;
                     int bitIndex = index % 8;
                     cacheRowProperties[byteIndex] ??= matrixProperty.GetArrayElementAtIndex(byteIndex);
@@ -89,7 +89,7 @@ namespace Qutility.Type
                     }
 
                     // next Cell Rect
-                    cellRect = BoolMatrixDrawer.GetRectRight(cellRect, cellHeight, cellHeight, padding);
+                    cellRect = BoolMatrixDrawer.GetRectRight(cellRect, cellSize, cellSize, padding);
                 }
                 // nextRow Rect
                 rowRect = BoolMatrixDrawer.GetExactRectUnder(rowRect, singleHeight);
@@ -114,7 +114,8 @@ namespace Qutility.Type
             return (size + 3) * EditorGUIUtility.singleLineHeight;
         }
 
-        private void HandleMouseDrag(Rect position, SerializedProperty[] cacheRowProperty, int rowSize, int colSize ,float toggleWidth, bool isSortYincrease)
+        private void HandleMouseDrag(Rect position, SerializedProperty[] cacheRowProperty, int rowSize, int colSize, float toggleWidth,
+            bool isSortYincrease)
         {
             bool hasDrag = false;
             Event currentEvent = Event.current;
@@ -150,10 +151,9 @@ namespace Qutility.Type
             void ToogleSerializeValue(int x, int y)
             {
                 // Ensure the index is within bounds
-                if (x > -1 && x < colSize &&
-                    y > -1 && y < rowSize)
+                if (x > -1 && x < colSize && y > -1 && y < rowSize)
                 {
-                    int index = y * rowSize + x;
+                    int index = y * colSize + x;
                     int byteIndex = index / 8;
                     int bitIndex = index % 8;
                     // Toggle the boolean value 
@@ -164,10 +164,9 @@ namespace Qutility.Type
             void SetSerializeValue(int x, int y, bool value)
             {
                 // Ensure the index is within bounds
-                if (x > -1 && x < colSize &&
-                    y > -1 && y < rowSize)
+                if (x > -1 && x < colSize && y > -1 && y < rowSize)
                 {
-                    int index = y * rowSize + x;
+                    int index = y * colSize + x;
                     int byteIndex = index / 8;
                     int bitIndex = index % 8;
                     cacheRowProperty[byteIndex].intValue = value
